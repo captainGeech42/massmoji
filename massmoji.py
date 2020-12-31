@@ -1,16 +1,27 @@
+import logging
+import math
 from typing import List
 
 import requests
 from bs4 import BeautifulSoup
 
-SLACKMOJI_URL = "https://slackmojis.com/"
+SLACKMOJI_URL = "https://slackmojis.com"
+
+logging.basicConfig(
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    level=logging.INFO,
+    datefmt="%Y/%m/%d %H:%M:%S",
+    handlers=[
+        logging.StreamHandler()
+    ]
+)
 
 class Emoji:
     name: str
     url: str
 
     def __init__(self, name: str, url: str):
-        self.name = name
+        self.name = name.replace(":", "")
         self.url = url
 
     def __eq__(self, other):
@@ -46,13 +57,51 @@ def get_see_mores(html: str) -> List[str]:
 
     return [x.find("a").get("href") for x in seemore_divs]
 
+def save_all_emojis_to_disk(emojis: List[Emoji]):
+    counter = 0
+    percent = 0
+
+    for i in range(len(emojis)):
+        if math.floor((counter / len(emojis)) * 100) > percent:
+            percent += 1
+            logging.info(f"emoji downloads: {percent}% completed")
+
+        e = emojis[i]
+
+        r = requests.get(e.url)
+
+        ct = r.headers["content-type"]
+        extension = ct.split("/")[1]
+
+        with open(f"emojis/{e.name}.{extension}", "wb") as f:
+            f.write(r.content)
+
+        counter += 1
+
+logging.info("STARTING SLACKMOJI DOWNLOAD")
+
 # get the emojis
-r = requests.get(SLACKMOJI_URL)
+logging.info("downloading html for /")
+r = requests.get(SLACKMOJI_URL + "/")
 emojis = []
 
 # get everything from the homepage
+logging.info("parsing emojis from /")
 emojis.extend(get_emojis(r.content.decode()))
 
-print([str(x) for x in emojis[:5]])
+# get all of the see more URLs
+logging.info("parsing see more urls from /")
+more_urls = get_see_mores()
 
+for u in more_urls:
+    logging.info(f"downloading html for {u}")
 
+    r = requests.get(SLACKMOJI_URL + u)
+
+    logging.info("parsing emojis for {u}")
+    emojis.extend(get_emojis(r.content.decode()))
+
+# download the emojis (this takes forever)
+save_all_emojis_to_disk(emojis)
+
+logging.info("FINISHED SLACKMOJI DOWNLOAD")
