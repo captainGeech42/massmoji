@@ -38,6 +38,14 @@ def get_emojis(html: str) -> List[Emoji]:
 
     return emojis
 
+def get_see_mores(html: str) -> List[str]:
+    # the See More urls are in a <div> with class=seemore
+    soup = BeautifulSoup(html, "html.parser")
+
+    seemore_divs = soup.find_all("div", "seemore")
+
+    return [x.find("a").get("href") for x in seemore_divs]
+
 # get the emojis
 r = requests.get(SLACKMOJI_URL)
 emojis = []
