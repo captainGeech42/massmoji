@@ -32,11 +32,13 @@ Then, you need to setup your `secret.py` with your Slack details. Go to `https:/
 
 Duplicate `secret.tmpl.py` to `secret.py`, and fill in the variables with the appropriate values.
 
-Once the slackmoji download finishes, you can upload everything to Slack:
+Once the Slackmoji download finishes, you can upload everything to Slack:
 
 ```
 $ python3 slack_upload.py
 ```
+
+Please be patient as it processes all of the emojis, it will take a number of hours and will be severely rate limited by Slack.
 
 ## Issues
 
