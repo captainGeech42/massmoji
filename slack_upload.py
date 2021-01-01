@@ -84,8 +84,9 @@ percent = 0
 logging.info("STARTING SLACK UPLOAD")
 
 for i in range(counter, len(emoji_fp_list)):
-    if math.floor((counter / num_emojis) * 100) > percent:
-        percent += 1
+    new_percent = math.floor((counter / num_emojis) * 100)
+    if new_percent > percent:
+        percent = new_percent
         logging.info(f"emoji uploads: {percent}% completed ({counter} emojis)")
 
     upload_emoji(emoji_fp_list[i], token)
