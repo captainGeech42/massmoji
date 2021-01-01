@@ -33,8 +33,6 @@ class Emoji:
         return self.name
 
 def get_emojis(html: str) -> List[Emoji]:
-    # an emoji is in a <img> with loading=lazy, and an equivalent alt and title
-    # its all wrapped in an <a> with class=downloader
     soup = BeautifulSoup(html, "html.parser")
 
     emoji_a_tags = soup.find_all("a", "downloader")
@@ -50,7 +48,6 @@ def get_emojis(html: str) -> List[Emoji]:
     return emojis
 
 def get_see_mores(html: str) -> List[str]:
-    # the See More urls are in a <div> with class=seemore
     soup = BeautifulSoup(html, "html.parser")
 
     seemore_divs = soup.find_all("div", "seemore")
@@ -91,17 +88,18 @@ emojis.extend(get_emojis(r.content.decode()))
 
 # get all of the see more URLs
 logging.info("parsing see more urls from /")
-more_urls = get_see_mores()
+more_urls = get_see_mores(r.content.decode())
 
 for u in more_urls:
     logging.info(f"downloading html for {u}")
 
     r = requests.get(SLACKMOJI_URL + u)
 
-    logging.info("parsing emojis for {u}")
+    logging.info(f"parsing emojis for {u}")
     emojis.extend(get_emojis(r.content.decode()))
 
 # download the emojis (this takes forever)
+logging.info("starting the big download")
 save_all_emojis_to_disk(emojis)
 
 logging.info("FINISHED SLACKMOJI DOWNLOAD")
