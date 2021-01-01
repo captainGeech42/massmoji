@@ -23,20 +23,14 @@ headers = {
     "Sec-GPC": "1"
 }
 
-def pretty_print(req):
-    print("{}\n{}\r\n{}\r\n\r\n{}".format(
-        "---------START---------",
-        req.method + " " + req.url,
-        "\r\n".join("{}: {}".format(k, v) for k, v in req.headers.items()),
-        req.body,
-    ))
-
 def upload_emoji(emoji_fp: str, csrf_token: str):
     filename = emoji_fp.split("/")[1]
-    emoji_name, extension = tuple(filename.split("."))
+    split = filename.split(".")
+    emoji_name = split[0]
+    extension = ".".join(split[1:])
 
-    if extension == "x-icon":
-        logging.warning(f"skipping emoji due to unsupported file type (.{extension}): {emoji_name}"
+    if extension == "x-icon" or extension == "vnd.microsoft.icon":
+        logging.warning(f"skipping emoji due to unsupported file type (.{extension}): {emoji_name}")
         return
 
     mime = f"image/{extension}"
