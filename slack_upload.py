@@ -29,7 +29,7 @@ def upload_emoji(emoji_fp: str, csrf_token: str):
     emoji_name = split[0]
     extension = ".".join(split[1:])
 
-    if extension == "x-icon" or extension == "vnd.microsoft.icon" or extension == "x-ms-bmp":
+    if extension == "x-icon" or extension == "vnd.microsoft.icon" or extension == "x-ms-bmp" or extension == "bmp":
         logging.warning(f"skipping emoji due to unsupported file type (.{extension}): {emoji_name}")
         return
 
