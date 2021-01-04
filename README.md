@@ -30,7 +30,7 @@ Then, you need to setup your `secret.py` with your Slack details. Go to `https:/
 
 ![Right click on the Cookie header](img/devtools2.png)
 
-Duplicate `secret.tmpl.py` to `secret.py`, and fill in the variables with the appropriate values.
+Duplicate `secret.tmpl.py` to `secret.py`, and fill in the variables with the appropriate values. 
 
 Once the Slackmoji download finishes, you can upload everything to Slack:
 
